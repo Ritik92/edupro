@@ -5,9 +5,9 @@ const prisma = new PrismaClient();
 
 // Define the params interface according to Next.js App Router expectations
 interface RouteContext {
-  params: {
+  params: Promise<{
     courseId: string;
-  }
+  }>
 }
 
 export async function GET(
@@ -15,7 +15,7 @@ export async function GET(
   context: RouteContext
 ) {
   try {
-    const courseId = parseInt(context.params.courseId);
+    const courseId = parseInt((await context.params).courseId);
 
     // Validate courseId
     if (isNaN(courseId)) {

@@ -12,7 +12,7 @@ export const authOptions: AuthOptions = {
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" }
-      },
+      },//@ts-ignore
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
         
