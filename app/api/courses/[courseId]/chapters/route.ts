@@ -1,16 +1,21 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+// Define the params interface according to Next.js App Router expectations
+interface RouteContext {
+  params: {
+    courseId: string;
+  }
+}
+
 export async function GET(
-  request: Request,
-  { params }: { params: { courseId: string } }
+  request: NextRequest,
+  context: RouteContext
 ) {
   try {
-    // Parse courseId from params
-    await params;
-    const courseId = parseInt(params.courseId);
+    const courseId = parseInt(context.params.courseId);
 
     // Validate courseId
     if (isNaN(courseId)) {
@@ -22,16 +27,16 @@ export async function GET(
 
     // Fetch chapters for the course
     const chapters = await prisma.chapter.findMany({
-        where: { courseId },
-        orderBy: { sequenceOrder: 'asc' },
-        include: {
-          quiz: {
-            include: {
-              questions: true, // Include questions for each quiz
-            },
+      where: { courseId },
+      orderBy: { sequenceOrder: 'asc' },
+      include: {
+        quiz: {
+          include: {
+            questions: true,
           },
         },
-      });
+      },
+    });
 
     return NextResponse.json(chapters);
   } catch (error) {
