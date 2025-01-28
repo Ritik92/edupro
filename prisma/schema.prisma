@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  email       String   @unique
+  name        String?
+  password    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  enrollments Enrollment[]
+}
+
+model Course {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  price       Float    @default(0.0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  enrollments Enrollment[]
+  chapters    Chapter[]
+}
+
+model Chapter {
+  id             Int      @id @default(autoincrement())
+  title          String
+  contentSummary String?
+  sequenceOrder  Int
+  courseId       Int
+  course         Course   @relation(fields: [courseId], references: [id])
+  quiz           Quiz?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([courseId, sequenceOrder])
+}
+
+model Quiz {
+  id          Int           @id @default(autoincrement())
+  title       String
+  chapterId   Int          @unique
+  chapter     Chapter       @relation(fields: [chapterId], references: [id])
+  questions   Question[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Question {
+  id            Int      @id @default(autoincrement())
+  quizId        Int
+  quiz          Quiz     @relation(fields: [quizId], references: [id])
+  questionText  String
+  correctAnswer String
+  option1       String
+  option2       String
+  option3       String
+  option4       String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Enrollment {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  courseId    Int
+  enrolledAt  DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+  course      Course   @relation(fields: [courseId], references: [id])
+
+  @@unique([userId, courseId])
+}
