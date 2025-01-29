@@ -8,38 +8,54 @@ datasource db {
 }
 
 model User {
-  id          Int      @id @default(autoincrement())
-  email       String   @unique
-  name        String?
-  password    String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  enrollments Enrollment[]
+  id              Int         @id @default(autoincrement())
+  email           String      @unique
+  name            String?
+  password        String
+  preferredLang   String      @default("en") // "en" for English, "hi" for Hindi
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  enrollments     Enrollment[]
 }
 
 model Course {
-  id          Int      @id @default(autoincrement())
+  id          Int          @id @default(autoincrement())
   title       String
   description String?
-  price       Float    @default(0.0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  price       Float        @default(0.0)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
   enrollments Enrollment[]
   chapters    Chapter[]
 }
 
 model Chapter {
-  id             Int      @id @default(autoincrement())
+  id             Int       @id @default(autoincrement())
   title          String
+  content        Json
   contentSummary String?
   sequenceOrder  Int
   courseId       Int
-  course         Course   @relation(fields: [courseId], references: [id])
+  course         Course    @relation(fields: [courseId], references: [id])
   quiz           Quiz?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  videos         Video[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   @@unique([courseId, sequenceOrder])
+}
+
+model Video {
+  id          Int       @id @default(autoincrement())
+  title       String
+  language    String    // "en" for English, "hi" for Hindi
+  videoUrl    String
+  chapterId   Int
+  chapter     Chapter   @relation(fields: [chapterId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([chapterId, language])
 }
 
 model Quiz {
