@@ -14,6 +14,9 @@ import {
   Clock,
   Globe
 } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -60,8 +63,23 @@ interface Chapter {
   courseId: number;
   createdAt: string;
   updatedAt: string;
+  quiz:Quiz|null
 }
-
+interface Question {
+    id: number;
+    questionText: string;
+    correctAnswer: string;
+    option1: string;
+    option2: string;
+    option3: string;
+    option4: string;
+  }
+  
+  interface Quiz {
+    id: number;
+    title: string;
+    questions: Question[];
+  }
 const CodeBlock = ({ code, language }: { code: string; language: string }) => (
   <pre className="bg-muted p-4 rounded-lg overflow-x-auto">
     <code className={`language-${language}`}>{code}</code>
@@ -76,6 +94,23 @@ export default function ChapterContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState<string>('en');
+  const [showQuiz, setShowQuiz] = useState(false);
+const [selectedAnswers, setSelectedAnswers] = useState<Record<number, string>>({});
+const [quizSubmitted, setQuizSubmitted] = useState(false);
+const [score, setScore] = useState(0);
+const handleQuizSubmit = () => {
+    if (!chapter?.quiz) return;
+    
+    let correctCount = 0;
+    chapter.quiz.questions.forEach(question => {
+      if (selectedAnswers[question.id] === question.correctAnswer) {
+        correctCount++;
+      }
+    });
+    
+    setScore((correctCount / chapter.quiz.questions.length) * 100);
+    setQuizSubmitted(true);
+  };
 
   useEffect(() => {
     const fetchChapterContent = async () => {
@@ -287,7 +322,59 @@ export default function ChapterContent() {
           </div>
         ))}
       </div>
-
+      {chapter.quiz && (
+  <Card className="mb-6">
+    <CardHeader>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <BookOpen className="h-5 w-5 text-primary" />
+          <CardTitle>{chapter.quiz.title}</CardTitle>
+        </div>
+        {!showQuiz && (
+          <Button onClick={() => setShowQuiz(true)}>Start Quiz</Button>
+        )}
+      </div>
+    </CardHeader>
+    {showQuiz && (
+      <CardContent>
+        <div className="space-y-6">
+          {chapter.quiz.questions.map((question) => (
+            <div key={question.id} className="space-y-4">
+              <h3 className="font-medium">{question.questionText}</h3>
+              <RadioGroup
+                onValueChange={(value) => 
+                  setSelectedAnswers(prev => ({...prev, [question.id]: value}))
+                }
+                value={selectedAnswers[question.id]}
+              >
+                {[question.option1, question.option2, question.option3, question.option4].map((option, index) => (
+                  <div key={index} className="flex items-center space-x-2">
+                    <RadioGroupItem 
+                      value={option}
+                      id={`q${question.id}-${index}`}
+                      disabled={quizSubmitted}
+                    />
+                    <Label htmlFor={`q${question.id}-${index}`}>{option}</Label>
+                  </div>
+                ))}
+              </RadioGroup>
+            </div>
+          ))}
+          {!quizSubmitted ? (
+            <Button onClick={handleQuizSubmit}>Submit Quiz</Button>
+          ) : (
+            <Alert className={score >= 70 ? "bg-green-100" : "bg-red-100"}>
+              <AlertTitle>Quiz Results</AlertTitle>
+              <AlertDescription>
+                You scored {score}%. {score >= 70 ? 'Congratulations!' : 'Try again!'}
+              </AlertDescription>
+            </Alert>
+          )}
+        </div>
+      </CardContent>
+    )}
+  </Card>
+)}
       {chapter.content.resources && chapter.content.resources.length > 0 && (
         <Card>
           <CardHeader>
