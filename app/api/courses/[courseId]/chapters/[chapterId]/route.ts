@@ -3,12 +3,12 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-// Correct interface for route params
+// Updated interface with Promise for params
 interface RouteContext {
-  params: {
+  params: Promise<{
     courseId: string;
     chapterId: string;
-  }
+  }>
 }
 
 export async function GET(
@@ -16,8 +16,9 @@ export async function GET(
   context: RouteContext
 ) {
   try {
-    const courseId = parseInt(context.params.courseId);
-    const chapterId = parseInt(context.params.chapterId);
+    const params = await context.params;
+    const courseId = parseInt(params.courseId);
+    const chapterId = parseInt(params.chapterId);
 
     // Validate IDs
     if (isNaN(courseId) || isNaN(chapterId)) {
@@ -31,7 +32,7 @@ export async function GET(
     const chapter = await prisma.chapter.findFirst({
       where: { 
         id: chapterId,
-        courseId: courseId // Added to ensure chapter belongs to course
+        courseId: courseId 
       },
       include: {
         videos: true,
