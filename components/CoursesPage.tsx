@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, BookOpen, GraduationCap, Star } from "lucide-react";
+import { ArrowRight, BookOpen, GraduationCap, Star, Rocket, Zap } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ interface Course {
   title: string;
   description: string;
   price: number;
+  category: string;
 }
 
 interface Enrollment {
@@ -59,19 +60,18 @@ const CoursesPage = () => {
       toast.success("Enrollment successful! Start learning now.");
     } catch (error) {
       console.error("Enrollment error:", error);
-      toast.error("Please sign in first!");
-
+      toast.error("Please sign in to enroll!");
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-white">
         <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full"
+            className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full"
           />
         </div>
       </div>
@@ -80,12 +80,23 @@ const CoursesPage = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-white">
         <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
-          <div className="text-center">
-            <p className="text-destructive text-lg mb-4">{error}</p>
-            <Button onClick={() => window.location.reload()}>Try Again</Button>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center p-8 bg-white rounded-2xl shadow-xl"
+          >
+            <div className="text-6xl mb-4">😞</div>
+            <p className="text-xl text-gray-700 mb-6 max-w-md">{error}</p>
+            <Button 
+              onClick={() => window.location.reload()}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-full"
+            >
+              <Zap className="mr-2 h-5 w-5" />
+              Try Again
+            </Button>
+          </motion.div>
         </div>
       </div>
     );
@@ -95,9 +106,11 @@ const CoursesPage = () => {
     if (isEnrolled(course.id)) {
       return (
         <Link href={`/courses/${course.id}`}>
-          <Button className="w-full" size="lg">
-            Continue Learning
-            <ArrowRight className="ml-2 h-5 w-5" />
+          <Button className="w-full group" size="lg">
+            <span className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+              Continue Learning
+            </span>
+            <ArrowRight className="ml-2 h-5 w-5 text-emerald-600 group-hover:translate-x-1 transition-transform" />
           </Button>
         </Link>
       );
@@ -105,20 +118,19 @@ const CoursesPage = () => {
 
     return (
       <Button
-        variant="default"
         size="lg"
-        className="w-full"
+        className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white hover:shadow-lg"
         onClick={() => handleEnroll(course.id)}
       >
         Enroll Now
-        <ArrowRight className="ml-2 h-5 w-5" />
+        <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
       </Button>
     );
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Toaster position="top-right" />
+    <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-white">
+      <Toaster position="top-right" toastOptions={{ className: 'bg-white shadow-xl' }} />
 
       {/* Header Section */}
       <section className="pt-32 pb-16 px-4 sm:px-6 lg:px-8">
@@ -129,12 +141,17 @@ const CoursesPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-4xl sm:text-6xl font-bold mb-6">
-              Explore Our
-              <span className="text-primary"> Expert Courses</span>
+            <div className="mb-8 inline-block bg-indigo-100 px-6 py-2 rounded-full">
+              <span className="text-indigo-600 font-semibold flex items-center gap-2">
+                <Rocket className="h-5 w-5" />
+                Start Learning Today
+              </span>
+            </div>
+            <h1 className="text-5xl sm:text-7xl font-bold mb-6 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              Transform Your Career
             </h1>
-            <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-              Choose from our wide range of professional courses and start your learning journey today.
+            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+              Choose from our expert-curated courses and join a community of passionate learners
             </p>
           </motion.div>
         </div>
@@ -145,35 +162,36 @@ const CoursesPage = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <AnimatePresence>
-              {courses.map((course) => (
+              {courses.map((course, index) => (
                 <motion.div
                   key={course.id}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 50 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5 }}
-                  className="bg-card rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300"
+                  transition={{ duration: 0.4, delay: index * 0.1 }}
+                  className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden"
                 >
-                  <div className="p-6">
+                  <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 to-purple-50/50 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="p-6 relative">
                     <div className="flex items-start justify-between mb-4">
-                      <div className="p-2 bg-primary/10 rounded-lg">
-                        <GraduationCap className="h-6 w-6 text-primary" />
+                      <div className={`p-3 rounded-xl bg-gradient-to-br ${getCategoryColor(course.category)}`}>
+                        <BookOpen className="h-6 w-6 text-white" />
                       </div>
-                      <div className="flex items-center space-x-1">
+                      <div className="flex items-center space-x-1 bg-indigo-50 px-3 py-1 rounded-full">
                         <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-                        <span className="text-sm font-medium">4.8</span>
+                        <span className="text-sm font-medium text-gray-700">4.8</span>
                       </div>
                     </div>
-                    <h2 className="text-2xl font-bold text-card-foreground mb-2">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-3">
                       {course.title}
                     </h2>
-                    <p className="text-muted-foreground mb-4">{course.description}</p>
+                    <p className="text-gray-600 mb-6 min-h-[80px]">{course.description}</p>
                     <div className="flex items-center justify-between mb-6">
-                      <div className="text-lg font-bold text-primary">
+                      <div className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                         ${course.price.toFixed(2)}
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        {isEnrolled(course.id) ? "✓ Enrolled" : "8 weeks"}
+                      <div className="text-sm font-medium px-3 py-1 rounded-full bg-emerald-100 text-emerald-700">
+                        {isEnrolled(course.id) ? "Enrolled ✓" : "8 Weeks • Beginner"}
                       </div>
                     </div>
                     <CourseButton course={course} />
@@ -186,6 +204,20 @@ const CoursesPage = () => {
       </section>
     </div>
   );
+};
+
+// Helper function for category colors
+const getCategoryColor = (category: string) => {
+  switch (category) {
+    case 'technology':
+      return 'from-blue-500 to-indigo-500';
+    case 'business':
+      return 'from-purple-500 to-fuchsia-500';
+    case 'design':
+      return 'from-pink-500 to-rose-500';
+    default:
+      return 'from-indigo-500 to-purple-500';
+  }
 };
 
 export default CoursesPage;
