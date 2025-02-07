@@ -6,6 +6,7 @@ import { Providers } from "./provider";
 
 import { Toaster } from 'sonner';
 import Navbar from "@/components/Navbar";
+import ChatbotEmbed from "@/components/Chatbot";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -32,8 +33,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        
         <Navbar/>
         {children}
+        <ChatbotEmbed />
         <Toaster position="top-center" richColors />
       </body>
     </html>
