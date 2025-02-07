@@ -7,7 +7,7 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GPT_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-// Function to process text using Gemini
+//@ts-ignore
 async function processTextWithGemini(text) {
   const prompt = `
     You are an AI assistant designed to help visually impaired users by processing and optimizing text content for screen readers. Your task is to take the following text extracted from a webpage and transform it into a clear, concise, and easy-to-understand format. Follow these guidelines strictly:
@@ -55,12 +55,12 @@ const ScreenReader = () => {
       document.body,
       NodeFilter.SHOW_TEXT,
       {
-        acceptNode: function(node) {
-          if (node.parentElement.offsetHeight === 0 || 
-              node.parentElement.tagName.toLowerCase() === 'script' ||
+        acceptNode: function(node) {//@ts-ignore
+          if (node.parentElement.offsetHeight === 0 || //@ts-ignore
+              node.parentElement.tagName.toLowerCase() === 'script' ||//@ts-ignore
               node.parentElement.tagName.toLowerCase() === 'style') {
             return NodeFilter.FILTER_REJECT;
-          }
+          }//@ts-ignore
           return node.textContent.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
         }
       }
@@ -69,7 +69,7 @@ const ScreenReader = () => {
     let textContent = [];
     let currentNode;
     
-    while (currentNode = walker.nextNode()) {
+    while (currentNode = walker.nextNode()) { //@ts-ignore
       textContent.push(currentNode.textContent.trim());
     }
 
