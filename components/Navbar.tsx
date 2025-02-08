@@ -33,10 +33,10 @@ const Navbar = () => {
           {/* Logo with Gradient */}
           <motion.a 
             href="/" 
-            className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent"
+            className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent"
             whileHover={{ scale: 1.05 }}
           >
-            EduPro
+            Brainiacs
           </motion.a>
 
           {/* Desktop Navigation */}
