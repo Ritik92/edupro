@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Trophy, Medal, Award, Flame, Crown, Rocket, Zap, Shield, Users, Star, Target } from "lucide-react";
 import axios from 'axios';
-export const demoLeaderboardData = [
+ const demoLeaderboardData = [
     {
       id: 1,
       name: "Sarah Chen",

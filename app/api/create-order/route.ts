@@ -36,6 +36,7 @@ export async function POST(req: Request) {
     // Ensure user ID type matches your database schema
     const payment = await prisma.payment.create({
       data: {
+        //@ts-ignore
         userId: Number(session.user.id), // Adjust if using string IDs
         courseId: Number(courseId),
         amount: course.price,
