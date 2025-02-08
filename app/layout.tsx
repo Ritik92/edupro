@@ -36,7 +36,7 @@ export default function RootLayout({
         
         <Navbar/>
         {children}
-        <ChatbotEmbed />
+        {/* <ChatbotEmbed /> */}
         <Toaster position="top-center" richColors />
       </body>
     </html>

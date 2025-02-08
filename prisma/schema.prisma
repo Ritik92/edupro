@@ -8,14 +8,21 @@ datasource db {
 }
 
 model User {
-  id              Int         @id @default(autoincrement())
-  email           String      @unique
+  id              Int           @id @default(autoincrement())
+  email           String        @unique
   name            String?
   password        String
-  preferredLang   String      @default("en") // "en" for English, "hi" for Hindi
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
+  preferredLang   String        @default("en")
+  level           Int           @default(1)
+  experiencePoints Int          @default(0)
+  totalCoins      Int          @default(0)
+  streakDays      Int          @default(0)
+  lastLoginDate   DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
   enrollments     Enrollment[]
+  achievements    UserAchievement[]
+  quizAttempts    QuizAttempt[]
 }
 
 model Course {
@@ -23,6 +30,8 @@ model Course {
   title       String
   description String?
   price       Float        @default(0.0)
+  difficulty  String       @default("BEGINNER") // BEGINNER, INTERMEDIATE, ADVANCED
+  xpReward    Int         @default(100)        // XP earned upon completion
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   enrollments Enrollment[]
@@ -30,42 +39,79 @@ model Course {
 }
 
 model Chapter {
-  id             Int       @id @default(autoincrement())
+  id             Int           @id @default(autoincrement())
   title          String
   content        Json
   contentSummary String?
   sequenceOrder  Int
+  xpReward       Int          @default(50)     // XP earned per chapter completion
   courseId       Int
-  course         Course    @relation(fields: [courseId], references: [id])
+  course         Course        @relation(fields: [courseId], references: [id])
   quiz           Quiz?
   videos         Video[]
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  userProgress   UserProgress[]
 
   @@unique([courseId, sequenceOrder])
 }
 
-model Video {
-  id          Int       @id @default(autoincrement())
+model Achievement {
+  id          Int               @id @default(autoincrement())
   title       String
-  language    String    // "en" for English, "hi" for Hindi
-  videoUrl    String
-  chapterId   Int
-  chapter     Chapter   @relation(fields: [chapterId], references: [id])
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  description String
+  badge       String            // URL to badge image
+  requirement String            // e.g., "Complete 5 courses"
+  xpReward    Int              @default(100)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  users       UserAchievement[]
+}
 
-  @@unique([chapterId, language])
+model UserAchievement {
+  id            Int         @id @default(autoincrement())
+  userId        Int
+  achievementId Int
+  unlockedAt    DateTime    @default(now())
+  user          User        @relation(fields: [userId], references: [id])
+  achievement   Achievement @relation(fields: [achievementId], references: [id])
+
+  @@unique([userId, achievementId])
+}
+
+model UserProgress {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  chapterId   Int
+  completed   Boolean   @default(false)
+  lastAccessed DateTime @default(now())
+  chapter     Chapter   @relation(fields: [chapterId], references: [id])
+
+  @@unique([userId, chapterId])
 }
 
 model Quiz {
-  id          Int           @id @default(autoincrement())
-  title       String
-  chapterId   Int          @unique
-  chapter     Chapter       @relation(fields: [chapterId], references: [id])
-  questions   Question[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id           Int           @id @default(autoincrement())
+  title        String
+  chapterId    Int          @unique
+  chapter      Chapter       @relation(fields: [chapterId], references: [id])
+  questions    Question[]
+  xpReward     Int          @default(50)    // XP earned for passing quiz
+  minPassScore Int          @default(70)    // Minimum score to pass (percentage)
+  attempts     QuizAttempt[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model QuizAttempt {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  quizId    Int
+  score     Int
+  passed    Boolean
+  attemptedAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  quiz      Quiz     @relation(fields: [quizId], references: [id])
 }
 
 model Question {
@@ -82,10 +128,24 @@ model Question {
   updatedAt     DateTime @updatedAt
 }
 
+model Video {
+  id          Int       @id @default(autoincrement())
+  title       String
+  language    String    
+  videoUrl    String
+  chapterId   Int
+  chapter     Chapter   @relation(fields: [chapterId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([chapterId, language])
+}
+
 model Enrollment {
   id          Int      @id @default(autoincrement())
   userId      Int
   courseId    Int
+  progress    Int      @default(0)      // Progress percentage
   enrolledAt  DateTime @default(now())
   user        User     @relation(fields: [userId], references: [id])
   course      Course   @relation(fields: [courseId], references: [id])
