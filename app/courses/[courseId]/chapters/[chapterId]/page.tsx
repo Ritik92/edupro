@@ -89,6 +89,7 @@ export default function ChapterContent() {
     score: 0,
   });
   const [isCompleted, setIsCompleted] = useState(false);
+  const [isRegenerating, setIsRegenerating] = useState(false);
 
   useEffect(() => {
     const fetchChapterContent = async () => {
@@ -110,6 +111,46 @@ export default function ChapterContent() {
 
     fetchChapterContent();
   }, [params]);
+  const regenerateContent = async (score) => {
+    setIsRegenerating(true);
+    const loadingToast = toast.loading('Adapting content to your learning style...', {
+      duration: Infinity,
+    });
+    try {
+      // Send chapter data and quiz results to Gemini
+      const { data: regeneratedContent } = await axios.post(
+        `/api/regenerate-content`,
+        {
+          originalContent: chapter,
+          quizScore: score, //@ts-ignore
+          attemptNumber: quizState.attempts + 1
+        }
+      );
+
+      // Update chapter with regenerated content
+      setChapter(regeneratedContent);
+      
+      // Reset quiz state but keep track of attempts
+      setQuizState(prev => ({
+        show: false,
+        answers: {},
+        submitted: false,
+        score: 0, //@ts-ignore
+        attempts: prev.attempts + 1
+      }));
+
+      toast.success('Content adapted to your needs!', {
+        description: 'Try the new explanations and quiz when you are ready.',
+      });
+    } catch (error) {
+      console.error('Regeneration error:', error);
+      toast.error('Failed to adapt content');
+    } finally {
+      setIsRegenerating(false);
+      toast.dismiss(loadingToast);
+    }
+  };
+
 
   const handleQuizSubmit = async () => {
     if (!chapter?.quiz) return;
@@ -135,6 +176,10 @@ export default function ChapterContent() {
         toast.success(`Quiz passed! +${chapter.xpReward} XP earned`, {
           description: `You scored ${finalScore}% - Great job!`
         });
+      }
+      else {
+        // Automatically trigger content regeneration for failing scores
+        await regenerateContent(finalScore);
       }
     } catch (error) {
       console.error('Submission error:', error);
