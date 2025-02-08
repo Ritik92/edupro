@@ -1,3 +1,4 @@
+
 import CoursesPage from "@/components/CoursesPage";
 import Image from "next/image";
 
