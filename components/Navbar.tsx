@@ -4,6 +4,8 @@ import { Menu, X, LogOut, User, LayoutDashboard } from 'lucide-react';
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import { ScreenReader } from './ScreenReaderComponent';
+import VoiceNavigation from './VoiceNavigationcomponent';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,8 +14,7 @@ const Navbar = () => {
 
   const navLinks = [
     { href: '/courses', label: 'Courses' },
-    { href: '/about', label: 'About' },
-    { href: '/contact', label: 'Contact' },
+    { href: '/leaderboard', label: 'Leaderboard' }
   ];
 
   const handleSignOut = async () => {
@@ -38,7 +39,8 @@ const Navbar = () => {
           >
             Brainiacs
           </motion.a>
-
+          <ScreenReader/>
+          <VoiceNavigation/>
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map(({ href, label }) => (
@@ -80,7 +82,7 @@ const Navbar = () => {
                   Sign In
                 </button>
                 <motion.button
-                  onClick={() => router.push("/auth/signup")}
+                  onClick={() => router.push("/auth/signin")}
                   className="px-8 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full hover:shadow-lg hover:scale-[1.02] transition-all"
                   whileHover={{ scale: 1.05 }}
                 >
@@ -152,7 +154,7 @@ const Navbar = () => {
                   </button>
                   <button
                     onClick={() => {
-                      router.push("/auth/signup");
+                      router.push("/auth/signin");
                       setIsOpen(false);
                     }}
                     className="w-full mt-4 py-3 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:shadow-md transition-all"

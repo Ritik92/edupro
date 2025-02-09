@@ -9,6 +9,7 @@ import Navbar from "@/components/Navbar";
 import ChatbotEmbed from "@/components/Chatbot";
 import VoiceNavigation from "@/components/VoiceNavigationcomponent";
 import CodeExecutor from "@/components/codeexecutor";
+import { ScreenReader } from "@/components/ScreenReaderComponent";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -38,10 +39,10 @@ export default function RootLayout({
         
         <Navbar/>
         {children}
-        {/* <ChatbotEmbed /> */}
-        {/* <VoiceNavigation/> */}
-    
-        <Toaster position="top-center" richColors />
+        <ChatbotEmbed />
+       
+      
+        <Toaster position="top-right" richColors />
       </body>
     </html>
     </Providers>

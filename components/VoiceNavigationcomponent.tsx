@@ -74,7 +74,7 @@ const VoiceNavigation = () => {
   };
 
   return (
-    <div className="fixed bottom-8 right-8">
+    <div className="relative">
       <AnimatePresence mode="wait">
         {!isRecording && !processing && (
           <motion.button
@@ -82,7 +82,9 @@ const VoiceNavigation = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             onClick={startRecording}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors shadow-lg"
+            className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 
+                     text-white rounded-full hover:shadow-lg hover:scale-[1.02] transition-all"
+            whileHover={{ scale: 1.05 }}
           >
             <Mic className="w-5 h-5" />
             <span>Voice Navigation</span>
@@ -95,7 +97,9 @@ const VoiceNavigation = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             onClick={stopRecording}
-            className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors shadow-lg"
+            className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-red-500 to-red-600 
+                     text-white rounded-full hover:shadow-lg hover:scale-[1.02] transition-all"
+            whileHover={{ scale: 1.05 }}
           >
             <Square className="w-5 h-5" />
             <span>Stop</span>
@@ -107,7 +111,8 @@ const VoiceNavigation = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-full shadow-lg"
+            className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-indigo-400 to-purple-400 
+                     text-white rounded-full shadow-lg"
           >
             <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
             <span>Processing...</span>

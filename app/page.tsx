@@ -1,226 +1,295 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, BookOpen, Users, Award, CheckCircle, Star, Rocket, GraduationCap } from "lucide-react";
+import { 
+  ArrowRight, BookOpen, Brain, Globe, Volume,
+  MessageSquare, Trophy, CreditCard, ChevronDown,
+  Sparkles, Target, Users
+} from "lucide-react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
   const router = useRouter();
-  
-  const fadeIn = {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.5 }
-  };
+  const { scrollY } = useScroll();
+  const [isVisible, setIsVisible] = useState(false);
 
-  const staggerChildren = {
-    initial: { opacity: 0 },
-    animate: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2
-      }
-    }
-  };
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
+
+  const backgroundY = useTransform(scrollY, [0, 1000], ['0%', '50%']);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-white">
-   
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-indigo-50 to-white">
+      {/* Animated Background Patterns */}
+      <motion.div 
+        className="fixed inset-0 z-0"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.4 }}
+        transition={{ duration: 1 }}
+      >
+        <motion.div style={{ y: backgroundY }}>
+          {[...Array(20)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute rounded-full mix-blend-multiply filter blur-xl"
+              style={{
+                width: Math.random() * 400 + 200,
+                height: Math.random() * 400 + 200,
+                background: `linear-gradient(${Math.random() * 360}deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1))`,
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+              }}
+              animate={{
+                scale: [1, 1.2, 1],
+                rotate: [0, 360],
+                opacity: [0.1, 0.3, 0.1],
+              }}
+              transition={{
+                duration: Math.random() * 20 + 10,
+                repeat: Infinity,
+                ease: "linear",
+              }}
+            />
+          ))}
+        </motion.div>
+      </motion.div>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-          <motion.div 
-            className="text-center relative z-10"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+      <section className="relative min-h-screen flex items-center justify-center px-4">
+        <div className="max-w-7xl mx-auto text-center z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 50 }}
             transition={{ duration: 0.8 }}
+            className="space-y-6"
           >
+            {/* Floating Badge */}
             <motion.div
-              initial={{ scale: 0.5 }}
-              animate={{ scale: 1 }}
-              className="mb-8"
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.5, duration: 0.5 }}
+              className="inline-flex items-center px-6 py-2 rounded-full bg-white/80 backdrop-blur-sm border border-indigo-100 shadow-lg"
             >
-              <Rocket className="h-16 w-16 text-indigo-600 mx-auto animate-bounce" />
+              <Sparkles className="w-5 h-5 text-indigo-600 mr-2" />
+              <span className="text-indigo-600 font-medium">AI-Powered Learning Platform</span>
             </motion.div>
-            
-            <h1 className="text-5xl sm:text-7xl font-extrabold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-6">
-              Transform Your Future with
-              <br />
-              <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                Expert Learning
-              </span>
-            </h1>
-            
-            <p className="text-xl text-gray-700 mb-12 max-w-3xl mx-auto leading-relaxed">
-              Join our vibrant community of learners and unlock your potential with industry-leading courses, 
-              hands-on projects, and career-changing certifications.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row justify-center gap-6">
-              <Button 
-                onClick={() => router.push('/courses')} 
-                size="lg" 
-                className="text-lg px-10 py-7 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg transition-all"
-              >
-                <Rocket className="mr-3 h-5 w-5" />
-                Explore Courses
-                <ArrowRight className="ml-3 h-5 w-5" />
-              </Button>
-              
-              <Button 
-                size="lg" 
-                variant="outline" 
-                className="text-lg px-10 py-7 border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50 hover:border-indigo-700"
-              >
-                <GraduationCap className="mr-3 h-5 w-5" />
-                Meet Our Instructors
-              </Button>
-            </div>
-          </motion.div>
 
-          {/* Floating Shapes Animation */}
-          <motion.div 
-            className="absolute top-0 left-0 w-full h-full"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            {[...Array(6)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute bg-gradient-to-r from-purple-400/20 to-indigo-400/20 rounded-full blur-lg"
-                style={{
-                  width: `${Math.random() * 100 + 50}px`,
-                  height: `${Math.random() * 100 + 50}px`,
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`
-                }}
-                animate={{
-                  y: [0, -100, 0],
-                  scale: [1, 1.2, 1],
-                }}
-                transition={{
-                  duration: Math.random() * 5 + 5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              />
-            ))}
+            {/* Main Heading */}
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7, duration: 0.8 }}
+              className="text-7xl sm:text-8xl font-black tracking-tight leading-none"
+            >
+              <span className="block bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent 
+                bg-[length:200%] animate-gradient">
+                Future of
+              </span>
+              <span className="block mt-2 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 bg-clip-text text-transparent 
+                bg-[length:200%] animate-gradient [animation-delay:0.2s]">
+                Learning
+              </span>
+            </motion.h1>
+
+            {/* Subtitle */}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.9, duration: 0.8 }}
+              className="max-w-2xl mx-auto text-xl sm:text-2xl text-gray-600 font-light leading-relaxed"
+            >
+              Experience the next generation of education with personalized AI learning paths, 
+              multilingual support, and interactive content.
+            </motion.p>
+
+            {/* CTA Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.1, duration: 0.8 }}
+              className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mt-12"
+            >
+              <Button 
+                size="lg"
+                className="group relative px-8 py-6 text-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 
+                  hover:to-purple-700 shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden"
+              >
+                <motion.span
+                  className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 opacity-0 group-hover:opacity-100 
+                    transition-opacity duration-300"
+                  style={{ mixBlendMode: "overlay" }}
+                />
+                <span className="relative flex items-center">
+                  <Brain className="mr-2 h-5 w-5" />
+                  Start Learning
+                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                </span>
+              </Button>
+
+              <Button 
+                size="lg"
+                variant="outline"
+                className="group px-8 py-6 text-lg border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50 
+                  transition-all duration-300"
+              >
+                <Target className="mr-2 h-5 w-5" />
+                Watch Demo
+              </Button>
+            </motion.div>
+
+            {/* Trust Indicators */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.3, duration: 0.8 }}
+              className="flex items-center justify-center gap-8 mt-16"
+            >
+              {[
+                { count: "50K+", label: "Active Students" },
+                { count: "100+", label: "Countries" },
+                { count: "4.9/5", label: "Rating" }
+              ].map((stat, i) => (
+                <div key={i} className="text-center">
+                  <div className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                    {stat.count}
+                  </div>
+                  <div className="text-sm text-gray-500">{stat.label}</div>
+                </div>
+              ))}
+            </motion.div>
           </motion.div>
         </div>
+
+        {/* Scroll Indicator */}
+        <motion.div
+          initial={{ opacity: 0, y: 0 }}
+          animate={{ opacity: [0, 1, 0], y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+        >
+          <ChevronDown className="h-8 w-8 text-indigo-600" />
+        </motion.div>
       </section>
 
       {/* Features Section */}
-      <section className="py-24 bg-white/50 backdrop-blur-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            className="text-center mb-20"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+      <section className="py-32 relative z-10">
+        <div className="max-w-7xl mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-20"
           >
-            <h2 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-4">
-              Why Choose Us?
+            <h2 className="text-5xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-6">
+              Powerful Features
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Discover the features that make our platform the best choice for your learning journey
+              Everything you need to accelerate your learning journey
             </p>
           </motion.div>
 
-          <motion.div 
-            className="grid grid-cols-1 md:grid-cols-3 gap-12"
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true }}
-            variants={staggerChildren}
-          >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { icon: BookOpen, title: "300+ Courses", color: "from-blue-400 to-indigo-500" },
-              { icon: Users, title: "1M+ Students", color: "from-purple-400 to-fuchsia-500" },
-              { icon: Award, title: "Certifications", color: "from-pink-400 to-rose-500" },
+              {
+                icon: Brain,
+                title: "AI Learning Path",
+                description: "Personalized curriculum that adapts to your progress",
+                color: "from-blue-500 to-indigo-500"
+              },
+              {
+                icon: Globe,
+                title: "Learn in Any Language",
+                description: "Content available in 50+ languages",
+                color: "from-indigo-500 to-purple-500"
+              },
+              {
+                icon: Volume,
+                title: "Voice Navigation",
+                description: "Hands-free learning experience",
+                color: "from-purple-500 to-pink-500"
+              },
+              {
+                icon: MessageSquare,
+                title: "AI Tutor",
+                description: "24/7 personalized assistance",
+                color: "from-pink-500 to-rose-500"
+              },
+              {
+                icon: Trophy,
+                title: "Global Rankings",
+                description: "Compete with learners worldwide",
+                color: "from-rose-500 to-orange-500"
+              },
+              {
+                icon: CreditCard,
+                title: "Secure Payments",
+                description: "Seamless Razorpay integration",
+                color: "from-orange-500 to-yellow-500"
+              }
             ].map((feature, i) => (
-              <motion.div 
+              <motion.div
                 key={i}
-                variants={fadeIn}
-                className="group relative bg-white p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="group relative p-8 rounded-3xl bg-white/80 backdrop-blur-sm border border-indigo-50 
+                  hover:border-indigo-200 shadow-lg hover:shadow-xl transition-all duration-300"
               >
-                <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-10 transition-all rounded-3xl`} />
-                <div className={`mb-6 w-20 h-20 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center mx-auto`}>
-                  <feature.icon className="h-10 w-10 text-white" />
+                <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-5 
+                  transition-opacity duration-300 rounded-3xl`} />
+                
+                <div className={`relative w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.color} p-4 mb-6 
+                  group-hover:scale-110 transition-transform duration-300`}>
+                  <feature.icon className="w-full h-full text-white" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">{feature.title}</h3>
-                <p className="text-gray-600 leading-relaxed">
-                  {i === 0 && "Comprehensive curriculum covering latest technologies and trends"}
-                  {i === 1 && "Join our global community of passionate learners and experts"}
-                  {i === 2 && "Earn industry-recognized certificates to boost your career"}
-                </p>
+
+                <h3 className="text-xl font-bold text-gray-900 mb-3">{feature.title}</h3>
+                <p className="text-gray-600">{feature.description}</p>
               </motion.div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-gradient-to-br from-indigo-600 to-purple-600">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            className="rounded-[40px] p-12 shadow-2xl relative overflow-hidden"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+      <section className="py-32 relative">
+        <div className="max-w-7xl mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
+            className="relative rounded-[2.5rem] overflow-hidden bg-gradient-to-r from-indigo-600 to-purple-600 p-16"
           >
-            <div className="absolute inset-0 bg-noise opacity-10" />
-            <div className="text-center max-w-3xl mx-auto relative z-10">
-              <h2 className="text-4xl font-bold text-white mb-6">
-                Start Learning Today with
-                <span className="block text-5xl mt-4">7-Day Free Trial</span>
+            <div className="relative z-10 text-center">
+              <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6">
+                Ready to Transform Your Learning?
               </h2>
               <p className="text-xl text-indigo-100 mb-12 max-w-2xl mx-auto">
-                Join thousands of successful learners who transformed their careers with us
+                Join thousands of successful learners and start your journey today
               </p>
-              <Button 
-                size="lg" 
-                className="text-lg px-14 py-8 bg-white text-indigo-600 hover:bg-gray-100 hover:scale-105 transform transition-all"
+              <Button
+                size="lg"
+                className="px-12 py-6 text-lg bg-white text-indigo-600 hover:bg-gray-100 hover:scale-105 
+                  transform transition-all duration-300"
               >
-                <Star className="mr-3 h-6 w-6 fill-yellow-400 stroke-yellow-500" />
-                Start Free Trial
-                <ArrowRight className="ml-3 h-5 w-5" />
+                <Sparkles className="mr-2 h-5 w-5" />
+                Get Started Free
+                <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </div>
-          </motion.div>
-        </div>
-      </section>
 
-      {/* Stats Section */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            className="grid grid-cols-2 lg:grid-cols-4 gap-8"
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true }}
-            variants={staggerChildren}
-          >
-            {[
-              { number: "100K+", label: "Certificates Issued" },
-              { number: "95%", label: "Success Rate" },
-              { number: "4.9/5", label: "Student Rating" },
-              { number: "50+", label: "Expert Instructors" },
-            ].map((stat, i) => (
-              <motion.div 
-                key={i}
-                variants={fadeIn}
-                className="p-8 text-center border-2 border-indigo-50 rounded-3xl bg-white hover:bg-gradient-to-b from-white to-indigo-50 transition-all"
-              >
-                <div className="text-5xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-4">
-                  {stat.number}
-                </div>
-                <div className="text-xl font-medium text-gray-700">
-                  {stat.label}
-                </div>
-              </motion.div>
-            ))}
+            {/* Background Pattern */}
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute inset-0" style={{
+                backgroundImage: "radial-gradient(circle at 2px 2px, white 1px, transparent 0)",
+                backgroundSize: "40px 40px"
+              }} />
+            </div>
           </motion.div>
         </div>
       </section>

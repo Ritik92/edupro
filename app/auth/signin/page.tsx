@@ -37,7 +37,7 @@ const AuthPage = () => {
 
         if (result?.ok) {
           toast.success('Sign in successful!');
-          router.push('/');
+          router.push('/courses');
           router.refresh();
         }
       } catch (error) {

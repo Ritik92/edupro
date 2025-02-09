@@ -651,192 +651,230 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 async function main() {
-  const course = await prisma.course.create({
-    data: {
-      title: 'Backend Development with Node.js & Express',
-      description: 'Build RESTful APIs and server-side applications with Node.js and Express',
-      price: 129.99,
+  const coursesData = [
+    {
+      title: 'Introduction to Python',
+      description: 'Learn the fundamentals of Python programming language.',
+      price: 49.99,
       chapters: {
         create: [
           {
-            title: 'Introduction to Node.js',
+            title: 'Python Basics',
             sequenceOrder: 1,
-            contentSummary: 'Learn Node.js fundamentals, modules, and package management',
+            contentSummary: 'Get started with Python basics.',
             content: {
               sections: [
                 {
-                  title: 'Node.js Basics',
+                  title: 'What is Python?',
                   type: 'text',
-                  content: 'Node.js is a JavaScript runtime built on Chrome\'s V8 engine. It uses an event-driven, non-blocking I/O model making it ideal for building scalable network applications.'
-                },
-                {
-                  title: 'Creating a Server',
-                  type: 'code',
-                  language: 'javascript',
-                  content: `const http = require('http');
-
-const server = http.createServer((req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  res.end('Hello from Node.js!');
-});
-
-server.listen(3000, () => {
-  console.log('Server running on port 3000');
-});`
-                },
-                {
-                  title: 'Core Modules',
-                  type: 'list',
-                  items: [
-                    'fs - File system operations',
-                    'path - File path utilities',
-                    'http - HTTP server/client',
-                    'events - Event emitter',
-                    'stream - Data streaming'
-                  ]
-                },
-                {
-                  title: 'NPM Basics',
-                  type: 'text',
-                  content: 'NPM (Node Package Manager) is the world\'s largest software registry. Learn to manage dependencies, scripts, and package configurations.'
-                }
-              ],
-              resources: [
-                {
-                  title: 'Node.js Documentation',
-                  type: 'link',
-                  url: 'https://nodejs.org/en/docs/'
-                },
-                {
-                  title: 'NPM Guide',
-                  type: 'link',
-                  url: 'https://docs.npmjs.com/'
-                }
-              ]
-            },
-            videos: {
-              create: [
-                {
-                  title: 'Node.js Fundamentals',
-                  language: 'en',
-                  videoUrl: 'https://example.com/nodejs-en.mp4'
-                },
-                {
-                  title: 'Node.js की मूल बातें',
-                  language: 'hi',
-                  videoUrl: 'https://example.com/nodejs-hi.mp4'
-                }
-              ]
-            },
-            quiz: {
-              create: {
-                title: 'Node.js Basics Quiz',
-                questions: {
-                  create: [
-                    {
-                      questionText: 'What is Node.js?',
-                      correctAnswer: 'JavaScript runtime environment',
-                      option1: 'Web framework',
-                      option2: 'Programming language',
-                      option3: 'JavaScript runtime environment',
-                      option4: 'Database system'
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          {
-            title: 'Express.js Framework',
-            sequenceOrder: 2,
-            contentSummary: 'Build web applications and REST APIs with Express',
-            content: {
-              sections: [
-                {
-                  title: 'Express Setup',
-                  type: 'code',
-                  language: 'javascript',
-                  content: `const express = require('express');
-const app = express();
-const port = 3000;
-
-app.get('/', (req, res) => {
-  res.send('Hello Express!');
-});
-
-app.listen(port, () => {
-  console.log(\`Server running on port \${port}\`);
-});`
-                },
-                {
-                  title: 'Middleware Concepts',
-                  type: 'text',
-                  content: 'Middleware functions have access to request and response objects. They can execute code, modify objects, and end the request-response cycle.'
-                },
-                {
-                  title: 'REST API Design',
-                  type: 'list',
-                  items: [
-                    'Use proper HTTP methods (GET, POST, PUT, DELETE)',
-                    'Resource-based URLs',
-                    'Stateless communication',
-                    'JSON responses',
-                    'Error handling'
-                  ]
-                }
-              ],
-              resources: [
-                {
-                  title: 'Express Documentation',
-                  type: 'link',
-                  url: 'https://expressjs.com/'
-                }
-              ]
-            },
-            videos: {
-              create: [
-                {
-                  title: 'Express Basics',
-                  language: 'en',
-                  videoUrl: 'https://example.com/express-en.mp4'
+                  content: 'Python is a popular, easy-to-learn programming language used for web, data science, automation, and more.'
                 }
               ]
             }
-          },
+          }
+        ]
+      }
+    },
+    {
+      title: 'Web Development with HTML & CSS',
+      description: 'Build your first website using HTML and CSS.',
+      price: 39.99,
+      chapters: {
+        create: [
           {
-            title: 'Database Integration',
-            sequenceOrder: 3,
-            contentSummary: 'Connect to databases using ORMs and query builders',
+            title: 'HTML & CSS Fundamentals',
+            sequenceOrder: 1,
+            contentSummary: 'Learn the building blocks of web development.',
             content: {
               sections: [
                 {
-                  title: 'Prisma ORM Setup',
-                  type: 'code',
-                  language: 'javascript',
-                  content: `// schema.prisma
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-}`
-                },
-                {
-                  title: 'CRUD Operations',
+                  title: 'Introduction to HTML',
                   type: 'text',
-                  content: 'Implement Create, Read, Update, Delete operations using database clients and ORMs.'
+                  content: 'HTML provides the structure for web pages, while CSS is used to style them.'
                 }
-              ],
-              resources: [
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      title: 'JavaScript Essentials',
+      description: 'Master the basics of JavaScript programming.',
+      price: 59.99,
+      chapters: {
+        create: [
+          {
+            title: 'JavaScript Basics',
+            sequenceOrder: 1,
+            contentSummary: 'Understand variables, functions, and control structures in JavaScript.',
+            content: {
+              sections: [
                 {
-                  title: 'Prisma Documentation',
-                  type: 'link',
-                  url: 'https://www.prisma.io/docs/'
+                  title: 'JavaScript Fundamentals',
+                  type: 'text',
+                  content: 'JavaScript is the language of the web. It brings interactivity to websites.'
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      title: 'Data Structures and Algorithms',
+      description: 'Learn essential data structures and algorithms for problem-solving.',
+      price: 79.99,
+      chapters: {
+        create: [
+          {
+            title: 'Introduction to Data Structures',
+            sequenceOrder: 1,
+            contentSummary: 'Familiarize yourself with arrays, lists, and more.',
+            content: {
+              sections: [
+                {
+                  title: 'Arrays and Lists',
+                  type: 'text',
+                  content: 'Arrays and lists are fundamental structures that store collections of data.'
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      title: 'Introduction to Machine Learning',
+      description: 'Discover the basics of machine learning and its applications.',
+      price: 99.99,
+      chapters: {
+        create: [
+          {
+            title: 'Machine Learning Overview',
+            sequenceOrder: 1,
+            contentSummary: 'An overview of machine learning concepts and terminologies.',
+            content: {
+              sections: [
+                {
+                  title: 'What is Machine Learning?',
+                  type: 'text',
+                  content: 'Machine learning uses algorithms to parse data, learn from it, and make informed decisions.'
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      title: 'UI/UX Design Fundamentals',
+      description: 'Learn the basics of user interface and user experience design.',
+      price: 44.99,
+      chapters: {
+        create: [
+          {
+            title: 'Design Principles',
+            sequenceOrder: 1,
+            contentSummary: 'Understand the core principles of UI/UX design.',
+            content: {
+              sections: [
+                {
+                  title: 'Principles of Design',
+                  type: 'text',
+                  content: 'Learn about balance, contrast, and hierarchy to create visually appealing designs.'
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      title: 'Mobile App Development with Flutter',
+      description: 'Build beautiful native mobile applications using Flutter.',
+      price: 109.99,
+      chapters: {
+        create: [
+          {
+            title: 'Getting Started with Flutter',
+            sequenceOrder: 1,
+            contentSummary: 'Introduction to Flutter and its development environment.',
+            content: {
+              sections: [
+                {
+                  title: 'Flutter Overview',
+                  type: 'text',
+                  content: 'Flutter is an open-source UI toolkit for building natively compiled applications across mobile, web, and desktop from a single codebase.'
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      title: 'Digital Marketing Basics',
+      description: 'Learn the essentials of digital marketing and online promotion.',
+      price: 29.99,
+      chapters: {
+        create: [
+          {
+            title: 'Introduction to Digital Marketing',
+            sequenceOrder: 1,
+            contentSummary: 'Understand digital marketing strategies and tools.',
+            content: {
+              sections: [
+                {
+                  title: 'What is Digital Marketing?',
+                  type: 'text',
+                  content: 'Digital marketing involves promoting products or services using digital channels to reach consumers.'
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      title: 'Cybersecurity Essentials',
+      description: 'Learn how to protect systems and data in the digital world.',
+      price: 89.99,
+      chapters: {
+        create: [
+          {
+            title: 'Cybersecurity Fundamentals',
+            sequenceOrder: 1,
+            contentSummary: 'An introduction to cybersecurity concepts.',
+            content: {
+              sections: [
+                {
+                  title: 'Basic Security Concepts',
+                  type: 'text',
+                  content: 'Learn about threats, vulnerabilities, and best practices to secure digital assets.'
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      title: 'Cloud Computing with AWS',
+      description: 'Explore cloud computing and learn how to use AWS services.',
+      price: 119.99,
+      chapters: {
+        create: [
+          {
+            title: 'Getting Started with AWS',
+            sequenceOrder: 1,
+            contentSummary: 'Learn the basics of Amazon Web Services.',
+            content: {
+              sections: [
+                {
+                  title: 'Introduction to AWS',
+                  type: 'text',
+                  content: 'AWS offers reliable, scalable, and inexpensive cloud computing services.'
                 }
               ]
             }
@@ -844,9 +882,119 @@ model User {
         ]
       }
     }
-  });
+  ];
+
+  // Loop through each course and create it in the database.
+  for (const courseData of coursesData) {
+    await prisma.course.create({ data: courseData });
+    console.log(`Created course: ${courseData.title}`);
+  }
 }
 
-main()
-  .catch(console.error)
-  .finally(() => prisma.$disconnect());
+async function deleteCourse(courseId) {
+  try {
+    console.log(`Starting deletion process for course ID: ${courseId}`)
+
+    // 1. Delete all quiz attempts related to the course's quizzes
+    await prisma.quizAttempt.deleteMany({
+      where: {
+        quiz: {
+          chapter: {
+            courseId: courseId
+          }
+        }
+      }
+    })
+    console.log('Deleted quiz attempts')
+
+    // 2. Delete all questions related to the course's quizzes
+    await prisma.question.deleteMany({
+      where: {
+        quiz: {
+          chapter: {
+            courseId: courseId
+          }
+        }
+      }
+    })
+    console.log('Deleted questions')
+
+    // 3. Delete all quizzes related to the course's chapters
+    await prisma.quiz.deleteMany({
+      where: {
+        chapter: {
+          courseId: courseId
+        }
+      }
+    })
+    console.log('Deleted quizzes')
+
+    // 4. Delete all user progress records for the course's chapters
+    await prisma.userProgress.deleteMany({
+      where: {
+        chapter: {
+          courseId: courseId
+        }
+      }
+    })
+    console.log('Deleted user progress')
+
+    // 5. Delete all videos related to the course's chapters
+    await prisma.video.deleteMany({
+      where: {
+        chapter: {
+          courseId: courseId
+        }
+      }
+    })
+    console.log('Deleted videos')
+
+    // 6. Delete all chapters of the course
+    await prisma.chapter.deleteMany({
+      where: {
+        courseId: courseId
+      }
+    })
+    console.log('Deleted chapters')
+
+    // 7. Delete all enrollments for the course
+    await prisma.enrollment.deleteMany({
+      where: {
+        courseId: courseId
+      }
+    })
+    console.log('Deleted enrollments')
+
+    // 8. Delete all payments related to the course
+    await prisma.payment.deleteMany({
+      where: {
+        courseId: courseId
+      }
+    })
+    console.log('Deleted payments')
+
+    // 9. Finally, delete the course itself
+    await prisma.course.delete({
+      where: {
+        id: courseId
+      }
+    })
+    console.log('Deleted course')
+
+    console.log('Successfully deleted all data related to the course')
+  } catch (error) {
+    console.error('Error during deletion:', error)
+    throw error
+  } finally {
+    await prisma.$disconnect()
+  }
+}
+
+// Execute the deletion
+ // Replace with your actual course ID
+deleteCourse(49)
+  .catch((error) => {
+    console.error('Failed to delete course:', error)
+    process.exit(1)
+  })
+
