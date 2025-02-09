@@ -21,6 +21,11 @@ interface Enrollment {
   courseId: number;
   userId: number;
 }
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
 
 const CoursesPage = () => {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -102,7 +107,78 @@ const CoursesPage = () => {
     );
   }
 
+  const loadRazorpay = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => {
+        resolve(true);
+      };
+      script.onerror = () => {
+        resolve(false);
+      };
+      document.body.appendChild(script);
+    });
+  };
+
   const CourseButton = ({ course }: { course: Course }) => {
+    const handlePayment = async () => {
+      try {
+        if (!session) {
+          toast.error("Please sign in to enroll!");
+          return;
+        }
+
+        const res = await loadRazorpay();
+        if (!res) {
+          toast.error("Razorpay SDK failed to load. Please try again.");
+          return;
+        }
+
+        // Create order
+        const orderResponse = await axios.post('/api/create-order', {
+          courseId: course.id,
+        });
+
+        const options = {
+          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+          amount: orderResponse.data.amount,
+          currency: orderResponse.data.currency,
+          name: 'Learning Platform',
+          description: `Payment for ${course.title}`,
+          order_id: orderResponse.data.orderId,
+          handler: async function (response: any) {
+            try {
+              // Verify payment
+              await axios.post('/api/verify-payment', {
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature
+              });
+              
+              toast.success('Payment successful! You are now enrolled.');
+              setEnrollments(prev => [...prev, { courseId: course.id, userId: session?.user?.id as number }]);
+            } catch (error) {
+              toast.error('Payment verification failed. Please contact support.');
+            }
+          },
+          prefill: {
+            name: session?.user?.name || '',
+            email: session?.user?.email || '',
+          },
+          theme: {
+            color: '#4F46E5',
+          },
+        };
+
+        const paymentObject = new window.Razorpay(options);
+        paymentObject.open();
+      } catch (error) {
+        console.error('Payment error:', error);
+        toast.error('Failed to initiate payment. Please try again.');
+      }
+    };
+
     if (isEnrolled(course.id)) {
       return (
         <Link href={`/courses/${course.id}`}>
@@ -120,14 +196,13 @@ const CoursesPage = () => {
       <Button
         size="lg"
         className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white hover:shadow-lg"
-        onClick={() => handleEnroll(course.id)}
+        onClick={handlePayment}
       >
-        Enroll Now
+        Enroll Now - ₹{course.price}
         <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
       </Button>
     );
   };
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-white">
       <Toaster position="top-right" toastOptions={{ className: 'bg-white shadow-xl' }} />
