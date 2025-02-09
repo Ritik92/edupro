@@ -157,6 +157,7 @@ const CoursesPage = () => {
               });
               
               toast.success('Payment successful! You are now enrolled.');
+              //@ts-ignore
               setEnrollments(prev => [...prev, { courseId: course.id, userId: session?.user?.id as number }]);
             } catch (error) {
               toast.error('Payment verification failed. Please contact support.');
